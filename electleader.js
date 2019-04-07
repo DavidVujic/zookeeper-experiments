@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const ZooKeeper = require('zookeeper');
+const { createClient } = require('./helper.js');
 
 function onData(client, rc, error, stat, data) {
   if (data && data.toString() === client.client_id) {
@@ -28,16 +28,6 @@ function runForLeader(client, path) {
     } else {
       checkMaster(client, path, runForLeader);
     }
-  });
-}
-
-/** @returns {ZooKeeper} */
-function createClient() {
-  return new ZooKeeper({
-    connect: '127.0.0.1:2181',
-    timeout: 5000,
-    debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN,
-    host_order_deterministic: false,
   });
 }
 
