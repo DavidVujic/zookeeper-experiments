@@ -14,4 +14,5 @@ function createClient(timeoutMs = 5000) {
 
 module.exports = {
   createClient,
+  ZooKeeper,
 };

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { createClient } = require('./helper.js');
+const { createClient, ZooKeeper } = require('./helper.js');
 
 function onData(client, rc, error, stat, data) {
   if (data && data.toString() === client.client_id) {
