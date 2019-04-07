@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
 const { createClient, ZooKeeper } = require('./helper.js');
+const logger = require('./logger.js');
 
 function onData(client, rc, error, stat, data) {
   if (data && data.toString() === client.client_id) {
-    console.log('leader');
+    logger.log('leader');
   }
 }
 
@@ -24,7 +24,7 @@ function checkMaster(client, path, retryFunc) {
 function runForLeader(client, path) {
   client.a_create(path, `${client.client_id}`, ZooKeeper.ZOO_EPHEMERAL, (rc) => {
     if (rc === 0) {
-      console.log('leader');
+      logger.log('leader');
     } else {
       checkMaster(client, path, runForLeader);
     }
@@ -35,8 +35,8 @@ function electLeader(path) {
   const client = createClient();
 
   client.on('connect', () => {
-    console.log('connect');
-    console.log(`session established, id=${client.client_id}`);
+    logger.log('connect');
+    logger.log(`session established, id=${client.client_id}`);
     runForLeader(client, path);
   });
 
