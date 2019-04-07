@@ -1,9 +1,11 @@
-const { createClient, ZooKeeper } = require('./helper.js');
-const logger = require('./logger.js');
+const { createClient, ZooKeeper } = require('./wrapper.js');
+const notifier = require('./notifier.js');
 
-function onData(client, rc, error, stat, data) {
-  if (data && data.toString() === client.client_id) {
-    logger.log('leader');
+function onData(client, path, rc, error, stat, data) {
+  const clientId = client.client_id;
+
+  if (data && data.toString() === clientId) {
+    notifier.emit('leader', `(${path}) ${clientId}`);
   }
 }
 
@@ -18,16 +20,19 @@ function watcher(client, path, checkFunc, retryFunc, rc) {
 function checkMaster(client, path, retryFunc) {
   const watchFunc = watcher.bind(null, client, path, checkMaster, retryFunc);
 
-  client.aw_get(path, watchFunc, onData.bind(null, client));
+  client.aw_get(path, watchFunc, onData.bind(null, client, path));
 }
 
 function runForLeader(client, path) {
-  client.a_create(path, `${client.client_id}`, ZooKeeper.ZOO_EPHEMERAL, (rc) => {
-    if (rc === 0) {
-      logger.log('leader');
-    } else {
+  const clientId = client.client_id;
+
+  client.a_create(path, `${clientId}`, ZooKeeper.ZOO_EPHEMERAL, (rc) => {
+    if (rc !== 0) {
       checkMaster(client, path, runForLeader);
+      return;
     }
+
+    notifier.emit('leader', `(${path}) ${clientId}`);
   });
 }
 
@@ -35,8 +40,7 @@ function electLeader(path) {
   const client = createClient();
 
   client.on('connect', () => {
-    logger.log('connect');
-    logger.log(`session established, id=${client.client_id}`);
+    notifier.emit('connect', `session established, id=${client.client_id}`);
     runForLeader(client, path);
   });
 
