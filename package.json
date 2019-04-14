@@ -9,7 +9,7 @@
   "author": "davidvujic",
   "license": "MIT",
   "dependencies": {
-    "zookeeper": "^4.0.1"
+    "zookeeper": "4.0.2"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
