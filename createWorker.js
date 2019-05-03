@@ -4,6 +4,7 @@ const notifier = require('./notifier.js');
 const noop = () => {};
 
 function createNode(client, name, done) {
+  // eslint-disable-next-line no-bitwise
   client.a_create(name, '', ZooKeeper.ZOO_EPHEMERAL | ZooKeeper.ZOO_SEQUENCE, (rc, error, path) => {
     done(`(${path}) result code: ${rc}`);
   });
