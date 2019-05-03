@@ -12,8 +12,8 @@
     "zookeeper": "4.0.3"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.16.0"
+    "eslint": "5.x",
+    "eslint-config-airbnb-base": "13.x",
+    "eslint-plugin-import": "2.x"
   }
 }
