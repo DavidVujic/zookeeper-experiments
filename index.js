@@ -10,10 +10,7 @@ notifier.on('createNode', message => logger.log('createNode', message));
 
 function setupMaster() {
   return new Promise((resolve) => {
-    notifier.on('leader', (message) => {
-      logger.log('leader', message);
-      resolve();
-    });
+    notifier.on('leader', resolve);
 
     electLeader('/master');
   });
@@ -21,10 +18,7 @@ function setupMaster() {
 
 function setupWorker() {
   return new Promise((resolve) => {
-    notifier.on('createWorker', (message) => {
-      logger.log('createWorker', message);
-      resolve();
-    });
+    notifier.on('createWorker', resolve);
 
     createWorker();
   });
@@ -40,9 +34,13 @@ async function addTask() {
 
 async function init() {
   await createNodes(['/workers', '/assign', '/tasks', '/status']);
-  await setupMaster();
-  await setupWorker();
-  await addListener({ client_id: 'TODO' });
+
+  const master = await setupMaster();
+  const worker = await setupWorker();
+
+  await addListener(master);
+  await addListener(worker);
+
   await addTask();
 }
 

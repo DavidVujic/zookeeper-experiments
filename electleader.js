@@ -1,11 +1,17 @@
 const { createClient, ZooKeeper } = require('./wrapper.js');
 const notifier = require('./notifier.js');
+const logger = require('./logger.js');
+
+function emit(client, path) {
+  logger.log(`(${path}) ${client.client_id}`);
+  notifier.emit('leader', client);
+}
 
 function onData(client, path, rc, error, stat, data) {
   const clientId = client.client_id;
 
   if (data && data.toString() === clientId) {
-    notifier.emit('leader', `(${path}) ${clientId}`);
+    emit(client, path);
   }
 }
 
@@ -32,7 +38,7 @@ function runForLeader(client, path) {
       return;
     }
 
-    notifier.emit('leader', `(${path}) ${clientId}`);
+    emit(client, path);
   });
 }
 
