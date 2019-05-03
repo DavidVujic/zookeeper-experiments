@@ -1,12 +1,12 @@
 const { createClient, ZooKeeper } = require('./wrapper.js');
 const notifier = require('./notifier.js');
+const logger = require('./logger.js');
 
 const noop = () => {};
 
-function createNode(client, name, done) {
-  client.a_create(name, '', ZooKeeper.ZOO_EPHEMERAL | ZooKeeper.ZOO_SEQUENCE, (rc, error, path) => {
-    done(`(${path}) result code: ${rc}`);
-  });
+function emit(client, path, rc) {
+  logger.log(`(${path}) result code: ${rc} client id: ${client.client_id}`);
+  notifier.emit('createWorker', client);
 }
 
 function createWorker() {
@@ -15,8 +15,9 @@ function createWorker() {
   client.on('connect', () => {
     notifier.emit('connect', `session established, id=${client.client_id}`);
 
-    createNode(client, '/workers/worker-', (message) => {
-      notifier.emit('createWorker', message);
+    // eslint-disable-next-line no-bitwise
+    client.a_create('/workers/worker-', '', ZooKeeper.ZOO_EPHEMERAL | ZooKeeper.ZOO_SEQUENCE, (rc, error, path) => {
+      emit(client, path, rc);
     });
   });
 
