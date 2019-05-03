@@ -44,13 +44,10 @@ async function init() {
 
   const master = await setupMaster();
   await addListener(master, '/workers');
+  await addListener(master, '/assign');
 
-  setInterval(() => {
-    setupWorker();
-  }, 3000);
-  // const worker = await setupWorker();
-
-  // await addListener(worker);
+  const worker = await setupWorker();
+  await addListener(worker, '/tasks');
 
   await addTask();
 }
