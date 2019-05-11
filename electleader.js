@@ -46,7 +46,7 @@ function electLeader(path) {
   const client = createClient();
 
   client.on('connect', () => {
-    notifier.emit('connect', `session established, id=${client.client_id}`);
+    notifier.emit('connect', `electLeader: session established, id=${client.client_id}`);
     runForLeader(client, path);
   });
 

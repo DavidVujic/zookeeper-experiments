@@ -13,7 +13,7 @@ function createWorker() {
   const client = createClient();
 
   client.on('connect', () => {
-    notifier.emit('connect', `session established, id=${client.client_id}`);
+    notifier.emit('connect', `createWorker: session established, id=${client.client_id}`);
 
     // eslint-disable-next-line no-bitwise
     client.a_create('/workers/worker-', '', ZooKeeper.ZOO_EPHEMERAL | ZooKeeper.ZOO_SEQUENCE, (rc, error, path) => {

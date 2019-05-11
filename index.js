@@ -1,6 +1,7 @@
 const { createNodes } = require('./setup.js');
 const { electLeader } = require('./electleader.js');
-const { createWorker } = require('./createWorker.js');
+const { createWorker } = require('./createworker.js');
+const { addTask } = require('./addtask.js');
 const { listen } = require('./addlistener.js');
 
 const logger = require('./logger.js');
@@ -8,6 +9,7 @@ const notifier = require('./notifier.js');
 
 notifier.on('connect', message => logger.log('connect', message));
 notifier.on('createNode', message => logger.log('createNode', message));
+notifier.on('addTask', message => logger.log('addTask', message));
 
 notifier.on('onChildren', (children) => {
   children.forEach((child) => {
@@ -19,7 +21,7 @@ function setupMaster() {
   return new Promise((resolve) => {
     notifier.on('leader', resolve);
 
-    electLeader('/lemaster');
+    electLeader('/master');
   });
 }
 
@@ -35,10 +37,6 @@ async function addListener(client, path) {
   listen(client, path);
 }
 
-async function addTask() {
-  logger.log('TODO: add task');
-}
-
 async function init() {
   await createNodes(['/workers', '/assign', '/tasks', '/status']);
 
@@ -49,7 +47,7 @@ async function init() {
   const worker = await setupWorker();
   await addListener(worker, '/tasks');
 
-  await addTask();
+  await addTask('hello world');
 }
 
 init().catch(logger.error);

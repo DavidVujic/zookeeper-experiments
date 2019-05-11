@@ -1,20 +1,8 @@
 const { createClient } = require('./wrapper.js');
 const notifier = require('./notifier.js');
+const { createNode, persistentNode } = require('./createnode.js');
 
 const noop = () => {};
-const persistentNode = 0;
-
-function createNode(client, path) {
-  return new Promise((resolve) => {
-    client.a_create(path, '', persistentNode, (rc) => {
-      if (rc === -110) {
-        resolve(`${path} already exists`);
-      } else {
-        resolve(`(${path}) result code: ${rc}`);
-      }
-    });
-  });
-}
 
 function createNodes(paths) {
   const client = createClient();
@@ -24,7 +12,7 @@ function createNodes(paths) {
 
       paths
         .forEach((path, index) => {
-          createNode(client, path)
+          createNode(client, path, persistentNode)
             .then((message) => {
               notifier.emit('createNode', message);
 
