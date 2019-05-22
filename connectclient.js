@@ -21,7 +21,12 @@ function connectClient() {
 
   client.on('close', () => {
     console.error('\x1b[36m', 'close', `id=${client.client_id} state=${client.state}`, '\x1b[0m');
+
+    client.removeAllListeners('connect');
+    client.removeAllListeners('connecting');
+    client.removeAllListeners('close');
     client = null;
+
     connectClient();
   });
 
