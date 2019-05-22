@@ -2,7 +2,7 @@
 const ZooKeeper = require('zookeeper');
 
 function connectClient() {
-  const client = new ZooKeeper();
+  let client = new ZooKeeper();
   let timeoutId;
 
   client.on('connect', () => {
@@ -16,13 +16,13 @@ function connectClient() {
 
     timeoutId = setTimeout(() => {
       client.close();
-      connectClient();
     }, 5000);
   });
 
   client.on('close', () => {
     console.error('\x1b[36m', 'close', `id=${client.client_id} state=${client.state}`, '\x1b[0m');
-    clearTimeout(timeoutId);
+    client = null;
+    connectClient();
   });
 
   client.init({
