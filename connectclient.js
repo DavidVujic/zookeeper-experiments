@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 const ZooKeeper = require('zookeeper');
 
+const host = process.argv[2] || '127.0.0.1:2181';
+
 function connectClient() {
   let client = new ZooKeeper();
   let timeoutId;
@@ -16,7 +18,7 @@ function connectClient() {
 
     timeoutId = setTimeout(() => {
       client.close();
-    }, 5000);
+    }, 25000);
   });
 
   client.on('close', () => {
@@ -31,7 +33,7 @@ function connectClient() {
   });
 
   client.init({
-    connect: '127.0.0.1:2181',
+    connect: host,
     timeout: 10000,
     debug_level: ZooKeeper.ZOO_LOG_LEVEL_WARN,
     host_order_deterministic: false,
