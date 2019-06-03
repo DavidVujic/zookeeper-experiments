@@ -33,19 +33,15 @@ function setupWorker() {
   });
 }
 
-function addListener(client, path) {
-  listen(client, path);
-}
-
 async function init() {
   await createNodes(['/workers', '/assign', '/tasks', '/status']);
 
   const master = await setupMaster();
-  await addListener(master, '/workers');
-  await addListener(master, '/assign');
+  await listen(master, '/workers');
+  await listen(master, '/assign');
 
   const worker = await setupWorker();
-  addListener(worker, '/tasks');
+  listen(worker, '/tasks');
 
   await addTask('hello world');
 }
