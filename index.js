@@ -33,7 +33,7 @@ function setupWorker() {
   });
 }
 
-async function addListener(client, path) {
+function addListener(client, path) {
   listen(client, path);
 }
 
@@ -45,7 +45,7 @@ async function init() {
   await addListener(master, '/assign');
 
   const worker = await setupWorker();
-  await addListener(worker, '/tasks');
+  addListener(worker, '/tasks');
 
   await addTask('hello world');
 }
