@@ -8,6 +8,7 @@ let updateDataIntervalId;
 
 function shutDown() {
   clearInterval(printIntervalId);
+  clearInterval(updateDataIntervalId);
   process.exit();
 }
 
