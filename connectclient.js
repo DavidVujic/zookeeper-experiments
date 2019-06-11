@@ -22,7 +22,8 @@ function exists(client, node, callback) {
       exists(client, node, callback);
     }
   }, (rc, error, stat) => {
-    callback(stat.version);
+    const ver = stat ? stat.version : -99;
+    callback(ver);
     console.log('aw_exists CALLBACK', 'rc:', rc, 'error:', error);
   });
 }
@@ -61,6 +62,7 @@ function connectClient() {
   });
 
   client.on('close', () => {
+    clearTimeout(timeoutId);
     console.error('\x1b[36m', 'close', `id=${client.client_id} state=${client.state}`, '\x1b[0m');
 
     client.removeAllListeners('connect');

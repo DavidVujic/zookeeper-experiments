@@ -9,4 +9,4 @@ RUN rm package-lock.json
 
 RUN npm install
 
-CMD ["node", "connectclient", "host.docker.internal:2181"]
+CMD ["node", "index", "host.docker.internal:2181"]
